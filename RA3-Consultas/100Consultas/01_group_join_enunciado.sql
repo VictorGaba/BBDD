@@ -1,9 +1,43 @@
+use sakila;
 -- ==============================================
 -- SECCIÓN A) 30 CONSULTAS CON JOIN DE 2 TABLAS
 -- ==============================================
 -- 1:  Para cada actor, muestra el número total de películas en las que aparece; es decir, cuenta cuántas filas de film_actor corresponden a cada actor.
+-- tablas : actor, film_actor
+
+SELECT 
+    COUNT(film_id) AS N_PELIS, CONCAT(first_name, ' ', last_name) AS NOMBRE
+FROM
+    actor
+        JOIN
+    film_actor USING (actor_id)
+GROUP BY actor_id;
+
 -- 2:  Lista solo los actores que participan en 20 o más películas (umbral alto) con su conteo.
+
+-- tablas : actor, film_actor
+SELECT 
+    COUNT(film_id) AS N_PELIS, CONCAT(first_name, ' ', last_name) AS NOMBRE
+FROM
+    actor
+        JOIN
+    film_actor USING (actor_id)
+GROUP BY actor_id
+HAVING COUNT(film_id) >= 20;
+
 -- 3:  Para cada idioma, indica cuántas películas están catalogadas en ese idioma.
+
+-- tablas: languaje, film, film category
+
+SELECT 
+    count(film_id) as N_pelis, name 
+FROM
+    language
+        JOIN
+    film USING (language_id)
+    group by (language_id);
+    
+    
 -- 4:  Muestra el promedio de duración (length) de las películas por idioma y filtra aquellos idiomas con duración media estrictamente mayor a 110 minutos.
 -- 5:  Para cada película, muestra cuántas copias hay en el inventario.
 -- 6:  Lista solo las películas que tienen al menos 5 copias en inventario.
