@@ -282,10 +282,80 @@ FROM
     order by city_id asc;
 
 -- 21:  Para cada país, cuenta cuántas ciudades existen.
+
+-- tablas : country , city 
+
+
+SELECT 
+   country_id, country, count(city_id)
+FROM
+    country
+        JOIN
+    city USING (country_id)
+    group by country_id;
+
+    
+    
+    
 -- 22:  Para cada idioma, calcula la duración media de películas y muestra solo los idiomas con media entre 90 y 120 inclusive.
+-- tablas : language, film 
+SELECT 
+    language_id, name, avg(length)
+FROM
+    language					
+        JOIN
+    film USING (language_id)
+    group by language_id;
+    
+    
+    
 -- 23:  Para cada película, cuenta el número de alquileres que se han hecho de cualquiera de sus copias (usando inventario).
+
+-- tablas : film, rental
+
+   SELECT 
+    film_id, title, COUNT(rental_id) AS total_alquileres
+FROM
+    film
+        JOIN
+    inventory USING (film_id)
+        JOIN
+    rental USING (inventory_id)
+GROUP BY film_id;
+    
+
+
 -- 24:  Para cada cliente, cuenta cuántos pagos ha realizado en 2005 (usando el año de payment_date).
+
+-- tablas : customer , payment 
+
+
+ SELECT 
+   customer_id, concat(first_name, ' ' , last_name), count(payment_date)
+FROM
+    customer
+        JOIN
+    payment USING (customer_id)
+    where year(payment_date) = 2005 
+    group by customer_id ;
+    
+    
+ 
+
 -- 25:  Para cada película, muestra el promedio de tarifa de alquiler (rental_rate) de las copias existentes (es un promedio redundante pero válido).
+
+-- tablas : film , rental ,
+
+SELECT 
+    concat(first_name, ' ' , last_name), avg(rental_rate)
+FROM
+    film
+        JOIN
+    inventory USING (film_id)
+        JOIN
+    rental USING (inventory_id)
+    group by ;
+    
 -- 26:  Para cada actor, muestra la duración media (length) de sus películas.
 -- 27:  Para cada ciudad, cuenta cuántos clientes hay (usando la relación cliente->address->city requiere 3 tablas; aquí contamos direcciones por ciudad).
 -- 28:  Para cada película, cuenta cuántos actores tiene asociados.
