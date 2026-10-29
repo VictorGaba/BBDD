@@ -94,12 +94,12 @@ FROM
 -- TABLAS : customer , rental  
 
 SELECT 
-    count(rental_id), concat(first_name, ' ' , last_name)
+    COUNT(rental_id), CONCAT(first_name, ' ', last_name)
 FROM
     customer
         JOIN
     rental USING (customer_id)
-    group by count(rental_id);
+GROUP BY COUNT(rental_id);
 
 
 
@@ -112,8 +112,50 @@ FROM
 
 
 -- 9:  Lista los clientes con 30 o más alquileres acumulados.
+
+-- tablas: customer , rental
+
+SELECT 
+    concat(first_name, ' ', last_name) AS NOMBRE, customer_id as ID_CLIENTE, count(rental_id) AS ALQUILERES
+FROM
+    customer
+        JOIN
+    rental USING (customer_id)
+    group by customer_id;
+    
+    SELECT 
+    *
+FROM
+    customer
+        JOIN
+    rental USING (customer_id);
+
 -- 10:  Para cada cliente, muestra el total de pagos (suma en euros/dólares) que ha realizado.
+
+-- tablas : customer, paymnent
+
+SELECT 
+    concat(first_name, ' ', last_name) AS NOMBRE, customer_id, sum(amount)
+FROM
+    customer
+        JOIN
+    payment USING (customer_id)
+    group by customer_id;
+
+    
 -- 11:  Muestra los clientes cuyo importe total pagado es al menos 200.
+
+-- tablas : customer , payment
+
+SELECT 
+    concat(first_name, ' ', last_name) AS NOMBRE, customer_id, sum(amount)
+FROM
+    customer
+        JOIN
+    payment USING (customer_id)
+    group by customer_id
+    having sum(amount) > 200;
+
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
 -- 13:  Para cada empleado, muestra el importe total procesado.
 -- 14:  Para cada tienda, cuenta cuántos artículos de inventario tiene.
