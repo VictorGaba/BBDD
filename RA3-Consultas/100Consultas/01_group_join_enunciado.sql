@@ -157,14 +157,130 @@ FROM
     having sum(amount) > 200;
 
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
+
+-- tablas : staff , payment
+
+SELECT 
+    staff_id, concat(first_name, ' ', last_name) AS NOMBRE, count(payment_id)
+FROM
+    staff
+        JOIN
+    payment USING (staff_id)
+    group by staff_id;
+    
+    
+    
 -- 13:  Para cada empleado, muestra el importe total procesado.
+
+-- tablas : staff , payment
+
+SELECT 
+     staff_id, concat(first_name, ' ', last_name) AS NOMBRE, sum(amount)
+FROM
+    staff
+        JOIN
+    payment USING (staff_id)
+		group by staff_id;
+
+
 -- 14:  Para cada tienda, cuenta cuántos artículos de inventario tiene.
+
+-- tablas : store , invemtory 
+
+SELECT 
+    store_id, count(inventory_id)
+FROM
+    store
+        JOIN
+    inventory USING (store_id)
+    group by store_id;
+
 -- 15:  Para cada tienda, cuenta cuántos clientes tiene asignados.
+-- tablas : store , customers
+
+SELECT 
+    store_id, count(customer_id)
+FROM
+    store
+        JOIN
+    customer USING (store_id)
+    group by store_id;
+
+
+
+SELECT 
+    *
+FROM
+    store
+        JOIN
+    customer USING (store_id);
+
 -- 16:  Para cada tienda, cuenta cuántos empleados (staff) tiene asignados.
+
+-- tablas : store , staff
+
+SELECT 
+    store_id, count(staff_id)
+FROM
+    store
+        JOIN
+    staff USING (store_id)
+    group by  store_id;
+    
+    
 -- 17:  Para cada dirección (address), cuenta cuántas tiendas hay ubicadas ahí (debería ser 0/1 en datos estándar).
+
+-- tablas : address , store
+
+SELECT 
+    address_id, address, count(store_id)
+FROM
+    address
+        JOIN
+    store USING (address_id)
+    group by address_id ;
+
 -- 18:  Para cada dirección, cuenta cuántos empleados residen en esa dirección.
+
+-- tablas : address, staff 
+
+SELECT 
+   address_id, address, count(staff_id)
+FROM
+    address
+        JOIN
+    staff USING (address_id)
+ group by address_id;
+
 -- 19:  Para cada dirección, cuenta cuántos clientes residen ahí.
+
+-- tablas: address, customers
+
+
+
+SELECT 
+    address_id, address, count(customer_id)
+FROM
+    address
+        JOIN
+    customer USING (address_id)
+    group by customer_id;
+
+
+
 -- 20:  Para cada ciudad, cuenta cuántas direcciones hay registradas.
+
+-- tablas : country , address
+
+SELECT 
+    city_id, city, count(address_id) 
+FROM
+    city 
+        JOIN
+    address USING (city_id)
+    group by address_id
+    order by city_id asc;
+
 -- 21:  Para cada país, cuenta cuántas ciudades existen.
 -- 22:  Para cada idioma, calcula la duración media de películas y muestra solo los idiomas con media entre 90 y 120 inclusive.
 -- 23:  Para cada película, cuenta el número de alquileres que se han hecho de cualquiera de sus copias (usando inventario).
