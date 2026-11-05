@@ -346,36 +346,231 @@ FROM
 
 -- tablas : film , rental ,
 
+SELECT
+    film_id,
+    title,
+    AVG(rental_rate) AS promedio_tarifa
+FROM film
+JOIN inventory USING (film_id)
+GROUP BY film_id, title;
+    
+-- 26:  Para cada actor, muestra la duración media (length) de sus películas.
+
+-- tablas : actor, film_actor, film
+
 SELECT 
-    concat(first_name, ' ' , last_name), avg(rental_rate)
+    actor_id, concat(first_name, ' ', last_name), avg(length) 
+FROM
+    ACTOR
+        JOIN
+    FILM_ACTOR USING (actor_id)
+        JOIN
+    FILM USING (film_id)
+    group by actor_id;
+    
+    -- 27:  Para cada ciudad, cuenta cuántos clientes hay (usando la relación cliente->address->city requiere 3 tablas; aquí contamos direcciones por ciudad).
+    
+    -- tablas : city , address , city 
+    
+    SELECT 
+    city_id, city, active
+FROM
+    customer
+        JOIN
+    address USING (address_id)
+        JOIN
+    city USING (city_id)
+    order by city_id asc;
+
+-- 28:  Para cada película, cuenta cuántos actores tiene asociados.
+
+-- tablas : film , film_actor  
+
+SELECT 
+    film_id , title , count(actor_id)
+FROM
+    film
+        JOIN
+    film_actor USING (film_id)
+group by film_id;
+
+-- 29:  Para cada categoría (por id), cuenta cuántas películas pertenecen a ella (sin nombre de categoría para mantener 2 tablas).
+
+-- tablas : category , film_category
+
+SELECT 
+    category_id, count(film_id)
+FROM
+    category
+        JOIN
+    film_category USING (category_id)
+    group by category_id;
+    
+-- 30:  Para cada tienda, cuenta cuántos alquileres totales se originan en su inventario.
+
+-- tablas : store, inventory
+
+SELECT 
+    store_id, count(rental_id)
+FROM
+    store
+        JOIN
+    inventory USING (store_id)
+        JOIN
+    rental USING (inventory_id)
+    group by store_id;
+
+
+-- ==============================================
+-- SECCIÓN B) 30 CONSULTAS CON JOIN DE 3 TABLAS
+-- ==============================================
+-- 31:  Para cada actor, cuenta cuántas películas tiene y muestra solo los que superan 15 películas.
+
+-- tablas : actor , film_actor, film 
+
+SELECT 
+    actor_id , concat(first_name, ' ', last_name), count(language_id)
+FROM
+    actor
+        JOIN
+    film_actor USING (actor_id)
+        JOIN
+    film USING (film_id)
+    group by actor_id
+    order by actor_id asc limit 15;
+    
+-- 32:  Para cada categoría (por nombre), cuenta cuántas películas hay en esa categoría.
+
+SELECT 
+    category_id, name, COUNT(film_id) AS total_peliculas
+FROM
+    category
+        JOIN
+    film_category USING (category_id)
+GROUP BY category_id , name;
+
+-- 33:  Para cada película, cuenta cuántos alquileres se han hecho de sus copias.
+
+SELECT 
+    film_id, title , count(rental_id)
 FROM
     film
         JOIN
     inventory USING (film_id)
         JOIN
     rental USING (inventory_id)
-    group by ;
+    group by film_id;
     
--- 26:  Para cada actor, muestra la duración media (length) de sus películas.
--- 27:  Para cada ciudad, cuenta cuántos clientes hay (usando la relación cliente->address->city requiere 3 tablas; aquí contamos direcciones por ciudad).
--- 28:  Para cada película, cuenta cuántos actores tiene asociados.
--- 29:  Para cada categoría (por id), cuenta cuántas películas pertenecen a ella (sin nombre de categoría para mantener 2 tablas).
--- 30:  Para cada tienda, cuenta cuántos alquileres totales se originan en su inventario.
--- ==============================================
--- SECCIÓN B) 30 CONSULTAS CON JOIN DE 3 TABLAS
--- ==============================================
--- 31:  Para cada actor, cuenta cuántas películas tiene y muestra solo los que superan 15 películas.
--- 32:  Para cada categoría (por nombre), cuenta cuántas películas hay en esa categoría.
--- 33:  Para cada película, cuenta cuántos alquileres se han hecho de sus copias.
 -- 34:  Para cada cliente, suma el importe pagado en 2005 y filtra clientes con total >= 150.
+
+SELECT 
+    customer_id,
+    CONCAT(first_name, ' ', last_name) AS cliente,
+    SUM(amount) AS total
+FROM
+    customer
+        JOIN
+    payment USING (customer_id)
+WHERE
+    YEAR(payment_date) = 2005
+GROUP BY customer_id , first_name , last_name
+HAVING SUM(amount) >= 150;
+    
+    
 -- 35:  Para cada tienda, suma el importe cobrado por todos sus empleados.
+
+SELECT 
+    store_id, sum(amount) as COBRADO
+FROM
+    store
+        JOIN
+    staff USING (store_id)
+        JOIN
+    payment USING (staff_id)
+    group by store_id;
+    
+    
 -- 36:  Para cada ciudad, cuenta cuántos empleados residen ahí (staff -> address -> city).
+
+SELECT 
+    city_id, city, count(staff_id)
+FROM
+    staff
+        JOIN
+    address USING (address_id)
+        JOIN
+    city USING (city_id)
+    group by city_id;
+    
+    
 -- 37:  Para cada ciudad, cuenta cuántas tiendas existen (store -> address -> city).
+
+SELECT 
+    city_id , city, count(store_id) as TIENDAS
+FROM
+    store
+        JOIN
+    address USING (address_id)
+        JOIN
+    city USING (city_id)
+    group by city_id;
+    
 -- 38:  Para cada actor, calcula la duración media de sus películas del año 2006.
+
+SELECT 
+    actor_id, concat(first_name, ' ' , last_name), avg(length)
+FROM
+    actor
+        JOIN
+    film_actor USING (actor_id)
+        JOIN
+    film USING (film_id)
+    where release_year = 2006
+    group by actor_id;
+    
+  
 -- 39:  Para cada categoría, calcula la duración media y muestra solo las que superan 120.
+
+SELECT 
+    category_id, name, AVG(length)
+FROM
+    category
+        JOIN
+    film_category USING (category_id)
+        JOIN
+    film USING (film_id)
+GROUP BY category_id , name
+HAVING AVG(length) > 120;
+    
 -- 40:  Para cada idioma, suma las tarifas de alquiler (rental_rate) de todas sus películas.
+
+SELECT 
+    language_id, name, sum(rental_rate)
+FROM
+    language
+        JOIN
+    film USING (language_id)
+        JOIN
+    inventory USING (film_id)
+    group by language_id;
+    
+    
+    
 -- 41:  Para cada cliente, cuenta cuántos alquileres realizó en fines de semana (SÁB-DO) usando DAYOFWEEK (1=Domingo).
+
+SELECT 
+    customer_id, concat(first_name, ' ', last_name), count(rental_id)
+FROM
+    customer
+        JOIN
+    rental USING (customer_id)
+	where DAYOFWEEK(rental_date) = 1 OR DAYOFWEEK(rental_date) = 7
+    group by customer_id;
+   
+
 -- 42:  Para cada actor, muestra el total de títulos distintos en los que participa (equivale a COUNT DISTINCT, sin subconsulta).
+
+
 -- 43:  Para cada ciudad, cuenta cuántos clientes residen ahí (customer -> address -> city).
 -- 44:  Para cada categoría, muestra cuántos actores distintos participan en películas de esa categoría.
 -- 45:  Para cada tienda, cuenta cuántas copias totales (inventario) tiene de películas en 2006.
