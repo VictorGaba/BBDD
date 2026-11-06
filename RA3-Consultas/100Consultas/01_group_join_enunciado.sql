@@ -627,8 +627,34 @@ WHERE
 GROUP BY customer_id;
 
 -- 47:  Para cada película, cuenta cuántos actores tienen el apellido de longitud >= 5.
+
+SELECT 
+    film_id, title, COUNT(actor_id)
+FROM
+    film
+        JOIN
+    film_actor USING (film_id)
+        JOIN
+    actor USING (actor_id)
+    where CHAR_LENGTH(last_name) >= 5
+    group by film_id;
+    
+    
 -- 48:  Para cada categoría, suma la duración total (length) de sus películas.
+
+SELECT 
+    category_id, sum(length), name
+FROM
+    category
+        JOIN
+    film_category USING (category_id)
+        JOIN
+    film USING (film_id)
+    group by category_id;
+    
+    
 -- 49:  Para cada ciudad, suma los importes pagados por clientes que residen en esa ciudad.
+
 -- 50:  Para cada idioma, cuenta cuántos actores distintos participan en películas de ese idioma.
 -- 51:  Para cada tienda, cuenta cuántos clientes activos (active=1) tiene.
 -- 52:  Para cada cliente, cuenta en cuántas categorías distintas ha alquilado (aprox. vía film_category; requiere 4 tablas, aquí contamos películas 2006 por inventario).
